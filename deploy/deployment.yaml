@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata: 
+  name: node-hostname
+  labels:
+    app: node-hostname
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: node-hostname
+  template:
+    metadata:
+      labels:
+        app: node-hostname
+    spec:
+      containers:
+      - name: node-hostname
+        image: eliaspias/test:latest
+        imagePullPolicy: "Always"
+        ports:
+          - containerPort: 3000
+        env:
+        - name: ENV_VAR
+          value: "env_var_value"
+      topologySpreadConstraints:
+      - maxSkew: 1 # pods per node
+        topologyKey: kubernetes.io/hostname
+        whenUnsatisfiable: ScheduleAnyway
+        labelSelector:
+          matchLabels:
+            app: node-hostname
+
+
